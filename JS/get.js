@@ -8,10 +8,10 @@ button.addEventListener("click", function() {
     end = inputs[2].value;
     step = inputs[3].value;
 
-    localStorage.setItem("function", func);
-    localStorage.setItem("start", start);
-    localStorage.setItem("end", end);
-    localStorage.setItem("step", step);
+    sessionStorage.setItem("function", func);
+    sessionStorage.setItem("start", start);
+    sessionStorage.setItem("end", end);
+    sessionStorage.setItem("step", step);
 
-    window.location.href = "/"
+    window.location.href = "./table.html"
 })
