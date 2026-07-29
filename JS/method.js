@@ -39,8 +39,13 @@ function printResponse(start, end, step){
 
     while (i <= end) {
         let response = newtonRaphsonMethod(i, 1e-6, 1e-4, 100)
-        let tr = `<tr><td>${i}</td><td>${response["x"]}</td><td>${response["iter"]}</td><td>${response["res"]}</td>`
-        table.innerHTML += tr
+        let tr = document.createElement("tr")
+        tr.addEventListener("click", function () {
+            sessionStorage.setItem("x0", response["x"]);
+            window.location.href = "./graph.html"
+        })
+        tr.innerHTML = `<td>${i}</td><td>${response["x"]}</td><td>${response["iter"]}</td><td>${response["res"]}`
+        table.appendChild(tr)
         i = Number((i+step).toPrecision(5))
     }
 }

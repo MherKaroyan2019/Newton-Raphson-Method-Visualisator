@@ -89,3 +89,13 @@
   background-color: #0441aa;
   color: white;
 }
+
+.body canvas {
+    border:1px solid #000000;
+    margin: auto;
+    display: block;
+}
+
+.body {
+    margin-bottom: 20px;
+}
