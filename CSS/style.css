@@ -96,6 +96,33 @@
     display: block;
 }
 
+.buttons {
+    width: 100%;
+    margin: auto;
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.buttons button {
+    height: 35px;
+    padding: 10px;
+    margin: 10px auto;
+    border-radius: 4px;
+    background-color: #207be6;
+    color: white;
+    border: none;
+    text-align: center;
+    transition: ease-in-out 0.5s;
+}
+
+.buttons div {
+    padding: 5px;
+    border-radius: 5px;
+    background-color: #1b6dca;
+}
+
 .body {
     margin-bottom: 20px;
 }

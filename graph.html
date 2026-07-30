@@ -15,7 +15,24 @@
     </div>
     <div class="body">
         <canvas id="graph" width="900" height="600"></canvas>
+        <div class="buttons">
+            <button id="previous">Previous</button>
+            <div>
+                <select id="iter"></select>
+                <button id="changeIter">Change Iteration</button>
+            </div>
+            <button id="goTo">Go to Iteration</button>
+            <div>
+                <input id="xCoord" type="number" placeholder="X coordinate">
+                <input id="yCoord" type="number" placeholder="Y coordinate">
+                <button id="teleport">Teleport</button>
+            </div>
+            <button id="origin">Origin</button>
+            <button id="next">Next</button>
+        </div>
     </div>
+    <script src="./JS/method.js"></script>
+    <script src="./JS/canvas.js"></script>
     <script src="./JS/graph.js"></script>
 </body>
 </html>

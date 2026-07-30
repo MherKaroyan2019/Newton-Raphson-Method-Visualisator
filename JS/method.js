@@ -1,53 +1,52 @@
-if (!sessionStorage.length) {
-    window.location.href = "./index.html"
+const table = document.getElementsByTagName("tbody")[0]
+
+const func =  math.compile(sessionStorage["function"])
+const deriv = math.derivative(sessionStorage["function"], "x").compile()
+
+function roundToPrecision(num, precision) {
+  let factor = Math.pow(10, precision)
+  return Math.round((num + Number.EPSILON) * factor) / factor
 }
-
-let table = document.getElementsByTagName("tbody")[0]
-console.log(table)
-
-let funcStr = sessionStorage.getItem("function")
-let func = math.compile(funcStr)
-
-let derivStr = math.derivative(funcStr, "x")
-let deriv = derivStr.compile()
-
 
 function newtonRaphsonMethod(x0, derivativeTol, rootTol, maxIter){
     let x = x0
+    let y = func.evaluate({x: x})
+    let iterations = []
+    iterations.push({x: roundToPrecision(x, 4), y: roundToPrecision(y, 4)})
+    let summary
     for(let i = 0; i < maxIter; i++){
         let f = func.evaluate({x: x})
         let d = deriv.evaluate({x: x})
+
+        if(!isFinite(f)){
+            summary = {x: roundToPrecision(x, 4), iter: i, res: "Undefined function"}
+            return {iterations: iterations, summary: summary}
+        }
+
+        if(!isFinite(d)){
+            summary = {x: roundToPrecision(x, 4), iter: i, res: "Undefined derivative"}
+            return {iterations: iterations, summary: summary}
+        }
         
         if(Math.abs(d) < derivativeTol){
-            return {x: x, iter: i + 1, res: "Derivative Near Zero"}
+            summary = {x: roundToPrecision(x, 4), iter: i + 1, res: "Derivative Near Zero"}
+            return {iterations: iterations, summary: summary}
         }
 
         xnew = x - f / d
+        ynew = func.evaluate({x: xnew})
+
+        iterations.push({x: roundToPrecision(xnew, 4), y: roundToPrecision(ynew, 4)})
 
         if(Math.abs(xnew - x) < rootTol){
-            return {x: xnew, iter: i + 1, res: "Converged"}
+            summary = {x: roundToPrecision(xnew, 4), iter: i + 1, res: "Converged"}
+            return {iterations: iterations, summary: summary}
         }
 
         x = xnew
     }
 
-    return {x: x, iter: maxIter, res: "Not Converged"}
+    summary = {x: roundToPrecision(x, 4), iter: maxIter, res: "Not Converged"}
+
+    return {iterations: iterations, summary: summary}
 }
-
-function printResponse(start, end, step){
-    let i = Number(start.toPrecision(5))
-
-    while (i <= end) {
-        let response = newtonRaphsonMethod(i, 1e-6, 1e-4, 100)
-        let tr = document.createElement("tr")
-        tr.addEventListener("click", function () {
-            sessionStorage.setItem("x0", response["x"]);
-            window.location.href = "./graph.html"
-        })
-        tr.innerHTML = `<td>${i}</td><td>${response["x"]}</td><td>${response["iter"]}</td><td>${response["res"]}`
-        table.appendChild(tr)
-        i = Number((i+step).toPrecision(5))
-    }
-}
-
-printResponse(+sessionStorage.getItem("start"), +sessionStorage.getItem("end"), +sessionStorage.getItem("step"))
