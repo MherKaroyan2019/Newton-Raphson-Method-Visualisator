@@ -19,12 +19,39 @@
             <label for="func">Function</label>
             <input type="text" id="func">
             <label for="start">Starting Initail guess</label>
-            <input type="number" id="start">
+            <input type="number" id="start" min="-1000" max="1000" value="0">
             <label for="end">Ending Initial guess</label>
-            <input type="number" id="end">
-            <label for="step">Step</label>
-            <input type="number" min="0" id="step">
+            <input type="number" id="end" min="-1000" max="1000" value="0">
+            <label>Step = 2<sup>a</sup> × 5<sup>b</sup></label>
+            <div id="stepVar">
+                <div>
+                    <label for="stepA">a</label>
+                    <input type="number" id="stepA" value="-1" min="-5" max="5">
+                </div>
+                <div>
+                    <label for="stepB">b</label>
+                    <input type="number" id="stepB" value="-1" min="-5" max="5">
+                </div>
+            </div>
+            <p id="step">Step value: <span id="stepResult">0.1</span></p>
+            <label for="rootTol">Root Tolerance</label>
+            <select id="rootTol">
+                <option value="2">10 ^ -2</option>
+                <option value="4" selected>10 ^ -4</option>
+                <option value="6">10 ^ -6</option>
+                <option value="8">10 ^ -8</option>
+                <option value="10">10 ^ -10</option>
+            </select>
+            <label for="derivTol">Derivative Tolerance</label>
+            <select id="derivTol">
+                <option value="6">10 ^ -6</option>
+                <option value="8">10 ^ -8</option>
+                <option value="10">10 ^ -10</option>
+                <option value="12">10 ^ -12</option>
+                <option value="14">10 ^ -14</option>
+            </select>
             <button class="initial_data">Calculate</button>
+            <p id="err"></p>
         </div>
 
     </div>

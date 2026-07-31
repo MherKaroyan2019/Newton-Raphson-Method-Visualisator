@@ -15,15 +15,25 @@ const settings = {
     graph: {
         pointRadius: 4,
         functionPointRadius: 2,
-        xTickCount: 20,
-        yTickCount: 12
+        xLabelCount: 20,
+        yLabelCount: 14,
+        xTickCount: 22,
+        yTickCount: 16
+    },
+    axis: {
+        axisXPixel: canvas.width / 2,
+        axisYPixel: canvas.height / 2,
+        axisX: 0,
+        axisY: 0
     },
     labels: {
-        fontSize: 12,
+        fontSize: 11,
         fontFamily: "Arial"
     },
     colors: {
         axis: "#000000",
+        semiaxis: "#6a6a6a",
+        grid: "#b2b2b2",
         label: "#667b00",
         function: "#0066ff",
         tangent: "#ff0000",
@@ -40,17 +50,21 @@ function toCanvasY(y){
 
 function styleConfiguration(type){
     ctx.font = `bold ${settings.labels.fontSize}px ${settings.labels.fontFamily}`
+    ctx.fillStyle = settings.colors.label
     switch (type) {
         case "axis":
-            ctx.fillStyle = settings.colors.label
             ctx.strokeStyle = settings.colors.axis
             break;
+        case "semiaxis":
+            ctx.strokeStyle = settings.colors.semiaxis
+            break;
+        case "grid":
+            ctx.strokeStyle = settings.colors.grid
+            break;
         case "function":
-            ctx.fillStyle = settings.colors.function
             ctx.strokeStyle = settings.colors.function
             break;
         case "tangent":
-            ctx.fillStyle = settings.colors.tangent
             ctx.strokeStyle = settings.colors.tangent
             break;
         default:
@@ -58,80 +72,200 @@ function styleConfiguration(type){
     }
 }
 
-function drawAxis(){
-    styleConfiguration("axis")
-    ctx.beginPath()
-    ctx.moveTo(0, settings.canvas.midY)
-    ctx.lineTo(settings.canvas.width, settings.canvas.midY)
+function countXAxis(){
+    let xLeft = Math.floor(settings.camera.centerX)
+    let xRight = Math.ceil(settings.camera.centerX)
 
-    ctx.moveTo(settings.canvas.midX, 0)
-    ctx.lineTo(settings.canvas.midX, settings.canvas.height)
+    let count = 9
+    let start = 0
+
+    let xValues = []
+    
+    if(xLeft == xRight){
+        count = 10
+        start = 1
+        if(settings.camera.centerX != settings.axis.axisX){
+            xValues.push(settings.camera.centerX)
+        }
+    }
+
+    for(let i = start; i <= count; i++){
+        xValues.push(xLeft - i)
+        xValues.push(xRight + i)
+    }
+
+    return xValues
+}
+
+function countYAxis(){
+    let yBottom = Math.floor(settings.camera.centerY)
+    let yTop = Math.ceil(settings.camera.centerY)
+
+    let count = 6
+    let start = 0
+
+    let yValues = []
+
+    if(yBottom == yTop){
+        count = 7
+        start = 1
+        if(settings.camera.centerY != settings.axis.axisY){
+            yValues.push(settings.camera.centerY)
+        }
+    }
+
+    for(let i = start; i <= count; i++){
+        yValues.push(yBottom - i)
+        yValues.push(yTop + i)
+    }
+
+    return yValues
+}
+
+function drawXAxis(){
+    styleConfiguration("axis")
+
+    let yValues = countYAxis()
+    let y = toCanvasY(0)
+
+    if(y >= settings.camera.pixelPerUnit && y <= (settings.canvas.height - settings.camera.pixelPerUnit)){
+        styleConfiguration("axis")
+        settings.axis.axisYPixel = y
+        settings.axis.axisY = 0
+    }else if(y < settings.camera.pixelPerUnit){
+        styleConfiguration("semiaxis")
+        settings.axis.axisYPixel = toCanvasY(yValues[yValues.length - 3])
+        settings.axis.axisY = yValues[yValues.length - 3]
+    }else if(y > (settings.canvas.height - settings.camera.pixelPerUnit)){
+        styleConfiguration("semiaxis")
+        settings.axis.axisYPixel = toCanvasY(yValues[yValues.length - 4])
+        settings.axis.axisY = yValues[yValues.length - 4]
+    }
+
+    ctx.beginPath()
+    ctx.moveTo(0, settings.axis.axisYPixel)
+    ctx.lineTo(settings.canvas.width, settings.axis.axisYPixel)
     ctx.stroke()
+}
+
+function drawYAxis(){
+    styleConfiguration("axis")
+
+    let xValues = countXAxis()
+    let x = toCanvasX(0)
+    if(x >= settings.camera.pixelPerUnit && x <= (settings.canvas.width - settings.camera.pixelPerUnit)){
+        styleConfiguration("axis")
+        settings.axis.axisXPixel = x
+        settings.axis.axisX = 0
+    }else if(x < settings.camera.pixelPerUnit){
+        styleConfiguration("semiaxis")
+        settings.axis.axisXPixel = toCanvasX(xValues[xValues.length - 4])
+        settings.axis.axisX = xValues[xValues.length - 4]
+    }else if(x > (settings.canvas.width - settings.camera.pixelPerUnit)){
+        styleConfiguration("semiaxis")
+        settings.axis.axisXPixel = toCanvasX(xValues[xValues.length - 3])
+        settings.axis.axisX = xValues[xValues.length - 3]
+    }
+
+    ctx.beginPath()
+    ctx.moveTo(settings.axis.axisXPixel, 0)
+    ctx.lineTo(settings.axis.axisXPixel, settings.canvas.height)
+    ctx.stroke()
+}
+
+function drawGrid(){
+    styleConfiguration("grid")
+
+    let xValues = countXAxis()
+    let yValues = countYAxis()
+
+    for(let i = 0; i < xValues.length; i++){
+        ctx.beginPath()
+        ctx.moveTo(toCanvasX(xValues[i]), 0)
+        ctx.lineTo(toCanvasX(xValues[i]), settings.canvas.height)
+        ctx.stroke()
+    }
+
+    for(let i = 0; i < yValues.length; i++){
+        ctx.beginPath()
+        ctx.moveTo(0, toCanvasY(yValues[i]))
+        ctx.lineTo(settings.canvas.width, toCanvasY(yValues[i]))
+        ctx.stroke()
+    }
+}
+
+function drawTick(){
+    styleConfiguration("axis")
+
+    let xValues = countXAxis()
+    let yValues = countYAxis()
+
+    for(let i = 0; i < xValues.length; i++){
+            ctx.beginPath()
+            ctx.arc(toCanvasX(xValues[i]), settings.axis.axisYPixel, settings.graph.pointRadius, 0, 2 * Math.PI)
+            ctx.stroke()
+    }
+
+    for(let i = 0; i < yValues.length; i++){
+            ctx.beginPath()
+            ctx.arc(settings.axis.axisXPixel, toCanvasY(yValues[i]), settings.graph.pointRadius, 0, 2 * Math.PI)
+            ctx.stroke()
+    }
 }
 
 function drawXAxisLabels(){
     styleConfiguration("axis")
-    let centerX = settings.canvas.midX
-    let centerY = settings.canvas.midY
+    let xValues = countXAxis()
+
+    ctx.textAlign = "center"
+
     ctx.beginPath()
-    ctx.arc(centerX, settings.canvas.midY, settings.graph.pointRadius, 0, 2 * Math.PI)
-    ctx.fillText("x", settings.canvas.width - 15, settings.canvas.midY - 15)
+    ctx.fillText("X", settings.canvas.width - 15, settings.axis.axisYPixel - 15)
     ctx.stroke()
 
-    ctx.textAlign = "left"
-
-    for(let i = 1; i <= settings.graph.xTickCount / 2 - 1; i++){
+    for(let i = 0; i < xValues.length - 2; i++){
+        if(xValues[i] == settings.axis.axisX){
+            continue
+        }
         ctx.beginPath()
-        ctx.fillText(roundToPrecision(settings.camera.centerX - i, 4), settings.canvas.midX - i * settings.camera.pixelPerUnit, settings.canvas.midY + 20)
-        ctx.arc(settings.canvas.midX - i * settings.camera.pixelPerUnit, settings.canvas.midY, settings.graph.pointRadius, 0, 2 * Math.PI)
+        ctx.fillText(xValues[i], toCanvasX(xValues[i]), settings.axis.axisYPixel + 20)
         ctx.stroke()
     }
-
-    ctx.beginPath()
-    ctx.arc(0, settings.canvas.midY, settings.graph.pointRadius, 0, 2 * Math.PI)
-    ctx.stroke()
-
-    ctx.textAlign = "right"
-
-    for(let i = 0; i <= settings.graph.xTickCount / 2 - 2; i++){
-        ctx.beginPath()
-        ctx.fillText(roundToPrecision(settings.camera.centerX + i + 1, 4), settings.canvas.midX + settings.camera.pixelPerUnit * (i + 1), settings.canvas.midY + 20)
-        ctx.arc(settings.canvas.midX + settings.camera.pixelPerUnit * (i + 1), settings.canvas.midY, settings.graph.pointRadius, 0, 2 * Math.PI)
-        ctx.stroke()
-    }
-
-    ctx.beginPath()
-    ctx.arc(settings.canvas.width, settings.canvas.midY, settings.graph.pointRadius, 0, 2 * Math.PI)
-    ctx.stroke()
 }
 
 function drawYAxisLabels(){
-    ctx.textAlign = "right"
     styleConfiguration("axis")
-    ctx.beginPath()
-    ctx.arc(settings.canvas.midX, settings.canvas.midY, settings.graph.pointRadius, 0, 2 * Math.PI)
-    ctx.fillText("y", settings.canvas.midX + 15, 15)
-    ctx.stroke()
+    let yValues = countYAxis()
 
-    for(let i = 0; i < Math.floor(settings.canvas.height / (settings.camera.pixelPerUnit * 2)); i++){
-        ctx.beginPath()
-        ctx.fillText(roundToPrecision(settings.camera.centerY + i + 1, 4), settings.canvas.midX - 20, settings.canvas.midY - (i + 1) * settings.camera.pixelPerUnit + 5)
-        ctx.arc(settings.canvas.midX, settings.canvas.midY - (i + 1) * settings.camera.pixelPerUnit, settings.graph.pointRadius, 0, 2 * Math.PI)
-        ctx.stroke()
+    let orin
+
+    if(settings.axis.axisXPixel <= 45){
+        orin = 20
+        ctx.textAlign = "left"
+    }else{
+        orin = -20
+        ctx.textAlign = "right"
     }
 
-    for(let i = 0; i < Math.floor(settings.canvas.height / (settings.camera.pixelPerUnit * 2)); i++){
+    ctx.beginPath()
+    ctx.fillText("Y", settings.axis.axisXPixel - orin, 15)
+    ctx.stroke()
+
+    for(let i = 0; i < yValues.length -2; i++){
+        if(yValues[i] == settings.axis.axisY){
+            continue
+        }
         ctx.beginPath()
-        ctx.fillText(roundToPrecision(settings.camera.centerY - i - 1, 4), settings.canvas.midX - 20, settings.canvas.midY + (i + 1) * settings.camera.pixelPerUnit + 5)
-        ctx.arc(settings.canvas.midX, settings.canvas.midY + (i + 1) * settings.camera.pixelPerUnit, settings.graph.pointRadius, 0, 2 * Math.PI)
+        ctx.fillText(yValues[i], settings.axis.axisXPixel + orin, toCanvasY(yValues[i]))
         ctx.stroke()
     }
 }
 
 function drawFunction(){
     styleConfiguration("function")
-    let start = settings.camera.centerX - settings.graph.xTickCount / 2
-    let end = settings.camera.centerX + settings.graph.xTickCount / 2
+
+    let start = settings.camera.centerX - settings.graph.xLabelCount / 2
+    let end = settings.camera.centerX + settings.graph.xLabelCount / 2
     let coords = []
 
     for(let i = start * 1000; i <= end * 1000; i++){
@@ -155,14 +289,19 @@ function drawFunction(){
     ctx.stroke()
 }
 
+function getTangent(tanX, tanY){
+    k = deriv.evaluate({x: tanX})
+
+    return `${k} * (x - ${tanX}) + ${tanY}`
+}
+
 function drawTangent(tanX, tanY){
     styleConfiguration("tangent")
 
-    k = deriv.evaluate({x: tanX})
-
-    let tangent = math.compile(`${k} * (x - ${tanX}) + ${tanY}`)
-    let start = settings.camera.centerX - settings.graph.xTickCount / 2
-    let end = settings.camera.centerX + settings.graph.xTickCount / 2
+    let tangentStr = getTangent(tanX, tanY)
+    let tangent = math.compile(tangentStr)
+    let start = settings.camera.centerX - settings.graph.xLabelCount / 2
+    let end = settings.camera.centerX + settings.graph.xLabelCount / 2
     let border1 = tangent.evaluate({x: start})
     let border2 = tangent.evaluate({x: end})
 
@@ -174,4 +313,6 @@ function drawTangent(tanX, tanY){
     ctx.beginPath()
     ctx.arc(toCanvasX(tanX), toCanvasY(tanY), settings.graph.pointRadius / 2, 0, 2 * Math.PI)
     ctx.stroke()
+
+
 }

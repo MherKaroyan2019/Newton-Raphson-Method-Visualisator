@@ -14,7 +14,25 @@
         </div>
     </div>
     <div class="body">
-        <canvas id="graph" width="900" height="600"></canvas>
+        <div class="navigation">
+            <a href="./table.html">Go back to the table</a>
+            <a href="./index.html">Change initial parameters</a>
+        </div>
+        <div class="info">
+            <h2>Graph Information</h2>
+
+            <p id="function"></p>
+            <p id="derivative"></p>
+            <p id="tangent"></p>
+            <p id="iteration"></p>
+            <p id="rootTol"></p>
+            <p id="derivativeTol"></p>
+            <p id="approximation"></p>
+            <p id="f(x)"></p>
+            <p id="f'(x)"></p>
+            <p id="status"></p>
+        </div>
+        <canvas id="graph" width="900" height="630"></canvas>
         <div class="buttons">
             <button id="previous">Previous</button>
             <div>
@@ -23,7 +41,7 @@
             </div>
             <button id="goTo">Go to Iteration</button>
             <div>
-                <input id="xCoord" type="number" placeholder="X coordinate">
+                <input id="xCoord" type="number" placeholder="X coordinate" min="-1000000" max="1000000">
                 <input id="yCoord" type="number" placeholder="Y coordinate">
                 <button id="teleport">Teleport</button>
             </div>

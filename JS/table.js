@@ -1,15 +1,11 @@
-if (!sessionStorage.length) {
-    window.location.href = "./index.html"
-}
-
-function printResponse(start, end, step){
+function printResponse(start, end, step, rootTol, derivTol){
     let i = roundToPrecision(start, 5)
 
     while (i <= end) {
-        let response = newtonRaphsonMethod(i, 1e-6, 1e-4, 100).summary
+        let response = newtonRaphsonMethod(i, derivTol, rootTol, 100).summary
         let tr = document.createElement("tr")
         let num = i
-
+		
         tr.addEventListener("click", function () {
             sessionStorage["x0"] = num
             window.location.href = "./graph.html"
@@ -20,4 +16,4 @@ function printResponse(start, end, step){
     }
 }
 
-printResponse(+sessionStorage.getItem("start"), +sessionStorage.getItem("end"), +sessionStorage.getItem("step"))
+printResponse(+sessionStorage.getItem("start"), +sessionStorage.getItem("end"), +sessionStorage.getItem("step"), +sessionStorage.getItem("rootTol"), +sessionStorage.getItem("derivTol"))
