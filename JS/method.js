@@ -1,7 +1,6 @@
 if (!sessionStorage["function"] || !sessionStorage["start"] || !sessionStorage["end"] || !sessionStorage["step"] || !sessionStorage["rootTol"] || !sessionStorage["derivTol"]) {
     window.location.href = "./index.html"
 }
-console.log(1)
 
 const table = document.getElementsByTagName("tbody")[0]
 
