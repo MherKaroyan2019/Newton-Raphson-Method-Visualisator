@@ -23,7 +23,7 @@ button.addEventListener("click", function() {
 	let func = inputs[0].value;
 	let start = +inputs[1].value;
 	let end = +inputs[2].value;
-	let step = +stepResult.innerHTML;
+	let step = +stepResult.innerText;
 	let rootTol = +selects[0].value;
 	let derivTol = +selects[1].value;
 	let a = +stepA.value
