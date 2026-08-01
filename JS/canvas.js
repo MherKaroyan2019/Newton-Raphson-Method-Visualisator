@@ -1,3 +1,8 @@
+let validationX0 = validateSession(["x0"])
+if(!validationX0.isValid){
+    window.location.href = "./table.html"
+}
+
 const canvas = document.getElementById("graph")
 const ctx = canvas.getContext('2d');
 const settings = {
@@ -15,10 +20,7 @@ const settings = {
     graph: {
         pointRadius: 4,
         functionPointRadius: 2,
-        xLabelCount: 20,
-        yLabelCount: 14,
-        xTickCount: 22,
-        yTickCount: 16
+        xLabelCount: 20
     },
     axis: {
         axisXPixel: canvas.width / 2,
@@ -269,7 +271,7 @@ function drawFunction(){
     let coords = []
 
     for(let i = start * 1000; i <= end * 1000; i++){
-        y = func.evaluate({x: i/1000})
+        let y = func.evaluate({x: i/1000})
         coords.push({x: toCanvasX(i/1000), y: toCanvasY(y)})
     }
 
@@ -290,7 +292,7 @@ function drawFunction(){
 }
 
 function getTangent(tanX, tanY){
-    k = deriv.evaluate({x: tanX})
+    let k = roundToPrecision(deriv.evaluate({x: tanX}), +sessionStorage.getItem("derivTol"))
 
     return `${k} * (x - ${tanX}) + ${tanY}`
 }

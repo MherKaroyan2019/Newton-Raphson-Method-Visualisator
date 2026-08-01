@@ -1,7 +1,7 @@
-if (!sessionStorage["function"] || !sessionStorage["start"] || !sessionStorage["end"] || !sessionStorage["step"] || !sessionStorage["rootTol"] || !sessionStorage["derivTol"]) {
+let validation = validateSession(["function", "start", "end", "step", "rootTol", "derivTol"])
+if(!validation.isValid){
     window.location.href = "./index.html"
 }
-console.log(1)
 
 const table = document.getElementsByTagName("tbody")[0]
 
@@ -44,8 +44,8 @@ function newtonRaphsonMethod(x0, derivativeTol, rootTol, maxIter){
             return {iterations: iterations, summary: summary}
         }
 
-        xnew = x - f / d
-        ynew = func.evaluate({x: xnew})
+        let xnew = x - f / d
+        let ynew = func.evaluate({x: xnew})
 
         iterations.push({x: roundToPrecision(xnew, rootTol), y: roundToPrecision(ynew, rootTol)})
 

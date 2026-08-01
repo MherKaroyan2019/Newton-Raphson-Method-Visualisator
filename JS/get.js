@@ -19,39 +19,6 @@ function updateStep(){
 stepA.addEventListener("input", updateStep);
 stepB.addEventListener("input", updateStep);
 
-function validateFunction(inputString) {
-	try {
-		const node = math.parse(inputString)
-
-		const filtered = node.filter(n => n.isSymbolNode)
-		const variables = [...new Set(filtered.map(n => n.name))]
-
-		const hasInvalidVariables = variables.filter(name => {
-			if (name == 'x'){ 
-				return false
-			}
-			if (name in math){
-				return false
-			}
-			return true
-        })
-		if (hasInvalidVariables.length != 0) {
-			return { isValid: false, reason: `Function contains additional variables: ${variables.filter(v => v !== 'x').join(', ')}` }
-		}
-
-		const code = node.compile()
-		const testResult = code.evaluate({ x: 1 })
-
-		if (typeof testResult !== 'number' && !math.isBigNumber(testResult) && !math.isFraction(testResult) && !math.isComplex(testResult)) {
-			return { isValid: false, reason: "Make sure your equation is valid and produces real numerical values" }
-		}
-
-		return { isValid: true, reason: ""}
-	} catch (error) {
-		return { isValid: false, reason: `Invalid Function` }
-	}
-}
-
 button.addEventListener("click", function() {
 	let func = inputs[0].value;
 	let start = +inputs[1].value;
@@ -62,25 +29,12 @@ button.addEventListener("click", function() {
 	let a = +stepA.value
 	let b = +stepB.value
 
-	let validFunction = validateFunction(func)
+	validation = validateInput(func, start, end, a, b, step)
 
-	if(!validFunction.isValid){
-		err.innerHTML = validFunction.reason
-		return
-	}else if(start < -1000 || start > 1000 || end < -1000 || end > 1000){
-		err.innerHTML = "Starting and Ending initial guesses must be in interval from -1000 to 1000"
-		return
-	}else if(start > end){
-		err.innerHTML = "Starting initial guess must be lower or equal to the Ending initial guess"
-		return
-	}else if(!Number.isInteger(a) || !Number.isInteger(b) || a < -5 || a > 5 || b < -5 || b > 5){
-		err.innerHTML = "A and B must be integers in the range from -5 to 5"
-		return
-	}else if((end - start) / step > 1000){
-		err.innerHTML = "The number of initial guesses must not be more than 1000"
-		return
+	if(!validation.isValid){
+		err.textContent = validation.reason
 	}else{
-		err.innerHTML = ""
+		err.textContent = ""
 
 		sessionStorage.setItem("function", func);
 		sessionStorage.setItem("start", start);
