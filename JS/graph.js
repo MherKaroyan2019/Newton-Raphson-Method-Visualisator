@@ -15,16 +15,16 @@ const buttons = {
     previousButton: document.getElementById("previous")
 }
 const p = {
-    func: document.getElementById("function"),
-    deriv: document.getElementById("derivative"),
-    tangent: document.getElementById("tangent"),
-    iter: document.getElementById("iteration"),
-    rootTol: document.getElementById("rootTol"),
-    derivativeTol: document.getElementById("derivativeTol"),
-    approx: document.getElementById("approximation"),
-    f: document.getElementById("f(x)"),
-    d: document.getElementById("f'(x)"),
-    status: document.getElementById("status")
+    func: document.getElementById("function").getElementsByTagName("span")[0],
+    deriv: document.getElementById("derivative").getElementsByTagName("span")[0],
+    tangent: document.getElementById("tangent").getElementsByTagName("span")[0],
+    iter: document.getElementById("iteration").getElementsByTagName("span")[0],
+    rootTol: document.getElementById("rootTol").getElementsByTagName("span")[0],
+    derivativeTol: document.getElementById("derivativeTol").getElementsByTagName("span")[0],
+    approx: document.getElementById("approximation").getElementsByTagName("span")[0],
+    f: document.getElementById("f(x)").getElementsByTagName("span")[0],
+    d: document.getElementById("f'(x)").getElementsByTagName("span")[0],
+    status: document.getElementById("status").getElementsByTagName("span")[0]
 }
 
 
@@ -33,7 +33,7 @@ let currentIter = 0
 for(let i = 0; i < iterInfo.iterations.length; i++){
     let option = document.createElement("option")
     option.setAttribute("value", i)
-    option.innerText = `Iteration ${i}`
+    option.textContent = `Iteration ${i}`
     select.appendChild(option)
 }
 
@@ -50,18 +50,18 @@ function drawCanvas(tanX, tanY){
     drawYAxisLabels()
 }
 
-p.func.innerHTML = `<strong>Function:</strong>${funcStr}`
-p.deriv.innerHTML = `<strong>Derivative:</strong>${derivStr}`
-p.rootTol.innerHTML = `<strong>Root Tolerance:</strong>10 ^ -${sessionStorage["rootTol"]}`
-p.derivativeTol.innerHTML = `<strong>Derivative Tolerance:</strong>10 ^ -${sessionStorage["derivTol"]}`
+p.func.textContent = `${funcStr}`
+p.deriv.textContent = `${derivStr}`
+p.rootTol.textContent = `10 ^ -${sessionStorage["rootTol"]}`
+p.derivativeTol.textContent = `10 ^ -${sessionStorage["derivTol"]}`
 
 function setP(){
-    p.tangent.innerHTML = `<strong>Tangent:</strong>${getTangent(iterInfo.iterations[currentIter].x, iterInfo.iterations[currentIter].y)}`
-    p.iter.innerHTML = `<strong>Iteration:</strong>${currentIter}`
-    p.approx.innerHTML = `<strong>Approximation:</strong>${iterInfo.iterations[currentIter].x}`
-    p.f.innerHTML = `<strong>f(x):</strong>${iterInfo.iterations[currentIter].y}`
-    p.d.innerHTML = `<strong>f'(x):</strong>${roundToPrecision(deriv.evaluate({x: iterInfo.iterations[currentIter].x}), sessionStorage["derivTol"])}`
-    p.status.innerHTML = `<strong>Status:</strong>${iterInfo.summary.res}`
+    p.tangent.textContent = `${getTangent(iterInfo.iterations[currentIter].x, iterInfo.iterations[currentIter].y)}`
+    p.iter.textContent = `${currentIter}`
+    p.approx.textContent = `${iterInfo.iterations[currentIter].x}`
+    p.f.textContent = `${iterInfo.iterations[currentIter].y}`
+    p.d.textContent = `${roundToPrecision(deriv.evaluate({x: iterInfo.iterations[currentIter].x}), sessionStorage["derivTol"])}`
+    p.status.textContent = `${iterInfo.summary.res}`
 }
 
 buttons.changeIterButton.addEventListener("click", function(){

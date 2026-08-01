@@ -10,7 +10,12 @@ function printResponse(start, end, step, rootTol, derivTol){
             sessionStorage["x0"] = num
             window.location.href = "./graph.html"
         })
-        tr.innerHTML = `<td>${i}</td><td>${response["x"]}</td><td>${response["iter"]}</td><td>${response["res"]}`
+        let values = [i, response.x, response.iter, response.res]
+        for (let value of values) {
+            let td = document.createElement("td")
+            td.textContent = value
+            tr.appendChild(td)
+        }
         table.appendChild(tr)
         i = roundToPrecision(i + step, 5)
     }
